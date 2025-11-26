@@ -100,5 +100,6 @@ public class SistemKelulusan {
         int totalScore = 18 + 14 + 10 + 19 + 14 + 10 + 10;
         System.out.println("TOTAL SCORE : " + totalScore + " / 100");
         System.out.println("==============================================================");
+        input.close();
     }
 }
