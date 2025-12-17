@@ -1,318 +1,248 @@
-import java.util.ArrayList;
+// Name : Destama Ardi Saktiawan
+// NIM  : 254107020185
+// Class: Ti/1i
+
 import java.util.Scanner;
 
-class Pendaftar {
-    private String nama;
-    private String nim;
-    private double ipk;
-    private String jenisBeasiswa;
-    private int penghasilanOrtu;
-
-    public Pendaftar(String nama, String nim, double ipk, String jenisBeasiswa, int penghasilanOrtu) {
-        this.nama = nama;
-        this.nim = nim;
-        this.ipk = ipk;
-        this.jenisBeasiswa = jenisBeasiswa;
-        this.penghasilanOrtu = penghasilanOrtu;
-    }
-
-    public String getNama() { return nama; }
-    public String getNim() { return nim; }
-    public double getIpk() { return ipk; }
-    public String getJenisBeasiswa() { return jenisBeasiswa; }
-    public int getPenghasilanOrtu() { return penghasilanOrtu; }
-
-    @Override
-    public String toString() {
-        return String.format("%-20s %-12s %-8.2f %-15s Rp %,d", 
-            nama, nim, ipk, jenisBeasiswa, penghasilanOrtu);
-    }
-}
-
 public class SistemBeasiswa {
-    private static ArrayList<Pendaftar> daftarPendaftar = new ArrayList<>();
-    private static Scanner scanner = new Scanner(System.in);
-
+    // Array 2D untuk menyimpan data mahasiswa
+    // Kolom: [0]=Nama, [1]=NIM, [2]=IPK, [3]=JenisBeasiswa, [4]=PenghasilanOrtu
+    static String[][] dataMhs = new String[100][5]; // Maksimal 100 mahasiswa
+    static int jumlahData = 0; // Counter jumlah data yang sudah diisi
+    static Scanner sc = new Scanner(System.in);
+    
     public static void main(String[] args) {
-        int pilihan;
-
+        int pilih;
+        
+        // Loop menu utama
         do {
-            tampilkanMenu();
-            System.out.print("Pilih menu (1-5): ");
-            pilihan = scanner.nextInt();
-            scanner.nextLine(); // consume newline
-
-            switch (pilihan) {
-                case 1:
-                    tambahDataPendaftar();
-                    break;
-                case 2:
-                    tampilkanSemuaPendaftar();
-                    break;
-                case 3:
-                    cariPendaftarBerdasarkanJenis();
-                    break;
-                case 4:
-                    hitungRataIPK();
-                    break;
-                case 5:
-                    System.out.println("\n=== Terima kasih telah menggunakan sistem ini ===");
-                    break;
-                default:
-                    System.out.println("\nPilihan tidak valid!");
+            System.out.println("\n========================================");
+            System.out.println("SISTEM PENDAFTARAN BEASISWA MAHASISWA");
+            System.out.println("========================================");
+            System.out.println("1. Tambah Data Pendaftar Beasiswa");
+            System.out.println("2. Tampilkan Semua Pendaftar");
+            System.out.println("3. Cari Pendaftar berdasarkan Jenis Beasiswa");
+            System.out.println("4. Hitung Rata-rata IPK per Jenis Beasiswa");
+            System.out.println("5. Keluar");
+            System.out.println("========================================");
+            System.out.print("PILIH MENU 1-5: ");
+            pilih = sc.nextInt();
+            sc.nextLine();
+            
+            // Switch case untuk menu
+            switch(pilih) {
+                case 1: tambahData(); break;
+                case 2: tampilData(); break;
+                case 3: cariData(); break;
+                case 4: hitungRataIPK(); break;
+                case 5: System.out.println("\nTerima kasih!"); break;
+                default: System.out.println("Pilihan salah!");
             }
-
-            if (pilihan != 5) {
-                System.out.println("\nTekan Enter untuk melanjutkan...");
-                scanner.nextLine();
-            }
-
-        } while (pilihan != 5);
-
-        scanner.close();
+        } while(pilih != 5);
     }
-
-    private static void tampilkanMenu() {
-        System.out.println("\n" + "=".repeat(60));
-        System.out.println("          SISTEM PENDAFTARAN BEASISWA");
-        System.out.println("=".repeat(60));
-        System.out.println("1. Tambah Data Pendaftar Beasiswa");
-        System.out.println("2. Tampilkan Semua Pendaftar");
-        System.out.println("3. Cari Pendaftar berdasarkan Jenis Beasiswa");
-        System.out.println("4. Hitung Rata-rata IPK per Jenis Beasiswa");
-        System.out.println("5. Keluar");
-        System.out.println("=".repeat(60));
-    }
-
-    private static void tambahDataPendaftar() {
-        System.out.println("\n=== TAMBAH DATA PENDAFTAR BEASISWA ===");
-
-        // Input Nama
-        System.out.print("Nama: ");
-        String nama = scanner.nextLine();
-
+    
+    // Fungsi untuk menambah data pendaftar
+    static void tambahData() {
+        if(jumlahData >= 100) {
+            System.out.println("Data sudah penuh!");
+            return;
+        }
+        
+        System.out.println("\n--- Tambah Data Pendaftar ---");
+        
+        // Input nama
+        System.out.print("Nama Mahasiswa: ");
+        String nama = sc.nextLine();
+        
         // Input NIM
         System.out.print("NIM: ");
-        String nim = scanner.nextLine();
-
-        // Input IPK dengan validasi
+        String nim = sc.nextLine();
+        
+        // Input dan validasi IPK
         double ipk = 0;
-        boolean validIPK = false;
-        while (!validIPK) {
-            try {
-                System.out.print("IPK terakhir (0.00 - 4.00): ");
-                ipk = scanner.nextDouble();
-                scanner.nextLine(); // consume newline
-
-                if (ipk < 0 || ipk > 4) {
-                    System.out.println("IPK harus antara 0.00 dan 4.00!");
-                } else {
-                    validIPK = true;
-                }
-            } catch (Exception e) {
-                System.out.println("Input tidak valid! Masukkan angka.");
-                scanner.nextLine(); // clear buffer
+        boolean valid = false;
+        while(!valid) {
+            System.out.print("IPK: ");
+            ipk = sc.nextDouble();
+            if(ipk >= 0 && ipk <= 4.0) {
+                valid = true;
+            } else {
+                System.out.println("IPK harus 0-4!");
             }
         }
-
-        // Input Jenis Beasiswa dengan validasi
-        String jenisBeasiswa = "";
-        boolean validJenis = false;
-        while (!validJenis) {
-            System.out.println("\nJenis Beasiswa:");
-            System.out.println("1. Reguler");
-            System.out.println("2. Unggulan");
-            System.out.println("3. Riset");
-            System.out.print("Pilih jenis beasiswa (1-3): ");
+        sc.nextLine();
+        
+        // Input dan validasi jenis beasiswa
+        String jenis = "";
+        valid = false;
+        while(!valid) {
+            System.out.print("Jenis Beasiswa (Reguler/Unggulan/Riset): ");
+            jenis = sc.nextLine().toUpperCase();
             
-            try {
-                int pilihanJenis = scanner.nextInt();
-                scanner.nextLine(); // consume newline
-
-                switch (pilihanJenis) {
-                    case 1:
-                        jenisBeasiswa = "Reguler";
-                        validJenis = true;
-                        break;
-                    case 2:
-                        jenisBeasiswa = "Unggulan";
-                        validJenis = true;
-                        break;
-                    case 3:
-                        jenisBeasiswa = "Riset";
-                        validJenis = true;
-                        break;
-                    default:
-                        System.out.println("Pilihan tidak valid! Pilih 1-3.");
+            if(jenis.equals("REGULER") || jenis.equals("UNGGULAN") || jenis.equals("RISET")) {
+                valid = true;
+            } else {
+                System.out.println("Jenis beasiswa tidak valid!");
+            }
+        }
+        
+        // Input dan validasi penghasilan orang tua
+        int gaji = 0;
+        valid = false;
+        while(!valid) {
+            System.out.print("Penghasilan Orang Tua (maks 2000000): ");
+            gaji = sc.nextInt();
+            sc.nextLine();
+            
+            if(gaji <= 2000000 && gaji >= 0) {
+                valid = true;
+            } else {
+                System.out.println("Penghasilan melebihi batas!");
+            }
+        }
+        
+        // Simpan data ke array 2D
+        dataMhs[jumlahData][0] = nama;
+        dataMhs[jumlahData][1] = nim;
+        dataMhs[jumlahData][2] = String.valueOf(ipk);
+        dataMhs[jumlahData][3] = jenis;
+        dataMhs[jumlahData][4] = String.valueOf(gaji);
+        
+        jumlahData++;
+        System.out.println("Data berhasil ditambahkan!");
+    }
+    
+    // Fungsi untuk menampilkan semua data (DENGAN NESTED LOOP)
+    static void tampilData() {
+        System.out.println("\n--- Daftar Pendaftar Beasiswa ---");
+        
+        // Cek apakah ada data
+        if(jumlahData == 0) {
+            System.out.println("Belum ada data");
+            return;
+        }
+        
+        // Header tabel
+        System.out.println("=======================================================================================");
+        System.out.printf("%-4s %-25s %-15s %-6s %-12s %-15s\n", 
+            "No", "Nama", "NIM", "IPK", "Jenis", "Penghasilan");
+        System.out.println("=======================================================================================");
+        
+        // NESTED LOOP untuk menampilkan data
+        // Loop outer: iterasi setiap baris (mahasiswa)
+        for(int i = 0; i < jumlahData; i++) {
+            System.out.printf("%-4d ", (i+1));
+            
+            // Loop inner: iterasi setiap kolom (atribut mahasiswa)
+            for(int j = 0; j < 5; j++) {
+                if(j == 0) {
+                    System.out.printf("%-25s ", dataMhs[i][j]); // Nama
+                } else if(j == 1) {
+                    System.out.printf("%-15s ", dataMhs[i][j]); // NIM
+                } else if(j == 2) {
+                    System.out.printf("%-6s ", dataMhs[i][j]);  // IPK
+                } else if(j == 3) {
+                    System.out.printf("%-12s ", dataMhs[i][j]); // Jenis
+                } else if(j == 4) {
+                    System.out.printf("Rp%-13s", dataMhs[i][j]); // Penghasilan
                 }
-            } catch (Exception e) {
-                System.out.println("Input tidak valid!");
-                scanner.nextLine(); // clear buffer
             }
+            System.out.println(); // Pindah baris setelah selesai 1 mahasiswa
         }
-
-        // Input Penghasilan Orang Tua dengan validasi
-        int penghasilanOrtu = 0;
-        boolean validPenghasilan = false;
-        while (!validPenghasilan) {
-            try {
-                System.out.print("Penghasilan orang tua (maksimal 2000000): Rp ");
-                penghasilanOrtu = scanner.nextInt();
-                scanner.nextLine(); // consume newline
-
-                if (penghasilanOrtu < 0) {
-                    System.out.println("Penghasilan tidak boleh negatif!");
-                } else if (penghasilanOrtu > 2000000) {
-                    System.out.println("Penghasilan orang tua melebihi batas maksimal!");
-                    System.out.println("Pendaftaran dibatalkan karena penghasilan melebihi batas maksimal.");
-                    return; // Keluar dari method
-                } else {
-                    validPenghasilan = true;
+        System.out.println("=======================================================================================");
+    }
+    
+    // Fungsi untuk mencari data berdasarkan jenis beasiswa (DENGAN NESTED LOOP)
+    static void cariData() {
+        System.out.println("\n--- Cari Data Berdasarkan Jenis Beasiswa ---");
+        
+        if(jumlahData == 0) {
+            System.out.println("Belum ada data");
+            return;
+        }
+        
+        // Input jenis beasiswa yang dicari
+        System.out.print("Masukkan jenis beasiswa: ");
+        String cari = sc.nextLine().toUpperCase();
+        
+        System.out.println("\nHasil Pencarian:");
+        System.out.println("=======================================================================================");
+        System.out.printf("%-4s %-25s %-15s %-6s %-12s %-15s\n", 
+            "No", "Nama", "NIM", "IPK", "Jenis", "Penghasilan");
+        System.out.println("=======================================================================================");
+        
+        // NESTED LOOP untuk mencari dan menampilkan data
+        int no = 1;
+        int ketemu = 0;
+        
+        // Loop outer: iterasi setiap baris (mahasiswa)
+        for(int i = 0; i < jumlahData; i++) {
+            // Cek apakah jenis beasiswa sesuai
+            if(dataMhs[i][3].equals(cari)) {
+                System.out.printf("%-4d ", no);
+                
+                // Loop inner: iterasi setiap kolom untuk mahasiswa yang cocok
+                for(int j = 0; j < 5; j++) {
+                    if(j == 0) {
+                        System.out.printf("%-25s ", dataMhs[i][j]);
+                    } else if(j == 1) {
+                        System.out.printf("%-15s ", dataMhs[i][j]);
+                    } else if(j == 2) {
+                        System.out.printf("%-6s ", dataMhs[i][j]);
+                    } else if(j == 3) {
+                        System.out.printf("%-12s ", dataMhs[i][j]);
+                    } else if(j == 4) {
+                        System.out.printf("Rp%-13s", dataMhs[i][j]);
+                    }
                 }
-            } catch (Exception e) {
-                System.out.println("Input tidak valid! Masukkan angka.");
-                scanner.nextLine(); // clear buffer
+                System.out.println();
+                no++;
+                ketemu++;
             }
         }
-
-        // Tambahkan ke daftar
-        Pendaftar pendaftar = new Pendaftar(nama, nim, ipk, jenisBeasiswa, penghasilanOrtu);
-        daftarPendaftar.add(pendaftar);
-
-        System.out.println("\n✓ Pendaftar berhasil disimpan. Total pendaftar: " + daftarPendaftar.size());
+        
+        if(ketemu == 0) {
+            System.out.println("Data tidak ditemukan");
+        }
+        System.out.println("=======================================================================================");
     }
-
-    private static void tampilkanSemuaPendaftar() {
-        System.out.println("\n=== TAMPILKAN SEMUA PENDAFTAR ===");
-
-        if (daftarPendaftar.isEmpty()) {
-            System.out.println("Belum ada pendaftar.");
+    
+    // Fungsi untuk menghitung rata-rata IPK per jenis beasiswa (DENGAN NESTED LOOP)
+    static void hitungRataIPK() {
+        System.out.println("\n--- Rata-rata IPK per Jenis Beasiswa ---");
+        
+        if(jumlahData == 0) {
+            System.out.println("Belum ada data");
             return;
         }
-
-        System.out.println("\n" + "=".repeat(90));
-        System.out.printf("%-4s %-20s %-12s %-8s %-15s %-20s\n", 
-            "No", "Nama Mahasiswa", "NIM", "IPK", "Jenis Beasiswa", "Penghasilan Ortu");
-        System.out.println("=".repeat(90));
-
-        for (int i = 0; i < daftarPendaftar.size(); i++) {
-            Pendaftar p = daftarPendaftar.get(i);
-            System.out.printf("%-4d %-20s %-12s %-8.2f %-15s Rp %,d\n", 
-                (i + 1), p.getNama(), p.getNim(), p.getIpk(), 
-                p.getJenisBeasiswa(), p.getPenghasilanOrtu());
-        }
-
-        System.out.println("=".repeat(90));
-        System.out.println("Total pendaftar: " + daftarPendaftar.size());
-    }
-
-    private static void cariPendaftarBerdasarkanJenis() {
-        System.out.println("\n=== CARI PENDAFTAR BERDASARKAN JENIS BEASISWA ===");
-
-        if (daftarPendaftar.isEmpty()) {
-            System.out.println("Belum ada pendaftar.");
-            return;
-        }
-
-        // Pilih jenis beasiswa
-        System.out.println("\nJenis Beasiswa:");
-        System.out.println("1. Reguler");
-        System.out.println("2. Unggulan");
-        System.out.println("3. Riset");
-        System.out.print("Pilih jenis beasiswa (1-3): ");
-
-        String jenisBeasiswa = "";
-        try {
-            int pilihan = scanner.nextInt();
-            scanner.nextLine(); // consume newline
-
-            switch (pilihan) {
-                case 1:
-                    jenisBeasiswa = "Reguler";
-                    break;
-                case 2:
-                    jenisBeasiswa = "Unggulan";
-                    break;
-                case 3:
-                    jenisBeasiswa = "Riset";
-                    break;
-                default:
-                    System.out.println("Pilihan tidak valid!");
-                    return;
-            }
-        } catch (Exception e) {
-            System.out.println("Input tidak valid!");
-            scanner.nextLine();
-            return;
-        }
-
-        // Cari dan tampilkan
-        ArrayList<Pendaftar> hasil = new ArrayList<>();
-        for (Pendaftar p : daftarPendaftar) {
-            if (p.getJenisBeasiswa().equals(jenisBeasiswa)) {
-                hasil.add(p);
-            }
-        }
-
-        System.out.println("\n=== Hasil Pencarian: " + jenisBeasiswa + " ===");
-
-        if (hasil.isEmpty()) {
-            System.out.println("Tidak ada pendaftar.");
-        } else {
-            System.out.println("\n" + "=".repeat(90));
-            System.out.printf("%-4s %-20s %-12s %-8s %-20s\n", 
-                "No", "Nama Mahasiswa", "NIM", "IPK", "Penghasilan Ortu");
-            System.out.println("=".repeat(90));
-
-            for (int i = 0; i < hasil.size(); i++) {
-                Pendaftar p = hasil.get(i);
-                System.out.printf("%-4d %-20s %-12s %-8.2f Rp %,d\n", 
-                    (i + 1), p.getNama(), p.getNim(), p.getIpk(), p.getPenghasilanOrtu());
-            }
-
-            System.out.println("=".repeat(90));
-            System.out.println("Total pendaftar " + jenisBeasiswa + ": " + hasil.size());
-        }
-    }
-
-    private static void hitungRataIPK() {
-        System.out.println("\n=== HITUNG RATA-RATA IPK PER JENIS BEASISWA ===");
-
-        if (daftarPendaftar.isEmpty()) {
-            System.out.println("Belum ada data pendaftar.");
-            return;
-        }
-
-        String[] jenisBeasiswa = {"Reguler", "Unggulan", "Riset"};
-        boolean adaData = false;
-
-        System.out.println("\n" + "=".repeat(60));
-        System.out.printf("%-15s %-15s %-15s\n", "Jenis Beasiswa", "Rata-rata IPK", "Jumlah Pendaftar");
-        System.out.println("=".repeat(60));
-
-        for (String jenis : jenisBeasiswa) {
-            double totalIPK = 0;
+        
+        // Array untuk jenis-jenis beasiswa
+        String[] jenisBeasiswa = {"REGULER", "UNGGULAN", "RISET"};
+        
+        System.out.println("=========================================");
+        
+        // NESTED LOOP untuk menghitung rata-rata per jenis
+        // Loop outer: iterasi setiap jenis beasiswa
+        for(int i = 0; i < jenisBeasiswa.length; i++) {
+            double total = 0;
             int jumlah = 0;
-
-            for (Pendaftar p : daftarPendaftar) {
-                if (p.getJenisBeasiswa().equals(jenis)) {
-                    totalIPK += p.getIpk();
+            
+            // Loop inner: iterasi semua mahasiswa untuk hitung yang sesuai jenis
+            for(int j = 0; j < jumlahData; j++) {
+                if(dataMhs[j][3].equals(jenisBeasiswa[i])) {
+                    total += Double.parseDouble(dataMhs[j][2]);
                     jumlah++;
                 }
             }
-
-            if (jumlah > 0) {
-                double rataIPK = totalIPK / jumlah;
-                System.out.printf("%-15s %-15.2f %-15d\n", jenis, rataIPK, jumlah);
-                adaData = true;
+            
+            // Tampilkan hasil
+            if(jumlah > 0) {
+                System.out.printf("%-9s: %.2f (dari %d mahasiswa)\n", 
+                    jenisBeasiswa[i], total/jumlah, jumlah);
+            } else {
+                System.out.printf("%-9s: tidak ada data\n", jenisBeasiswa[i]);
             }
         }
-
-        System.out.println("=".repeat(60));
-
-        if (!adaData) {
-            System.out.println("Tidak ada data untuk dihitung.");
-        }
+        System.out.println("=========================================");
     }
 }
-// Destama Ardi saktiawan - 254107020185
