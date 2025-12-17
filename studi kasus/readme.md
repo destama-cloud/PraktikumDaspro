@@ -6,7 +6,7 @@ static String[][] dataMhs = new String[100][5];  // Array 2D
 static int jumlahData = 0;  // Counter
 static Scanner sc = new Scanner(System.in);
 ```
-** Array 2D untuk 100 mahasiswa × 5 atribut (Nama, NIM, IPK, Jenis, Gaji)
+**Jawab:** Array 2D untuk 100 mahasiswa × 5 atribut (Nama, NIM, IPK, Jenis, Gaji)
 
 ---
 
@@ -39,7 +39,7 @@ for(int i = 0; i < jumlahData; i++) {      // Loop mahasiswa
     System.out.println();  // Baris baru
 }
 ```
-**Outer = tiap mahasiswa, Inner = tiap atribut
+**Jawab:** Outer = tiap mahasiswa, Inner = tiap atribut
 
 ---
 
@@ -53,9 +53,8 @@ for(int i = 0; i < jumlahData; i++) {
     }
 }
 ```
-**Ada IF untuk filter sebelum inner loop
+**Jawab:** Ada IF untuk filter sebelum inner loop
 
----
 
 ## 6. NESTED LOOP #3 - HITUNG RATA-RATA
 ```java
@@ -70,7 +69,6 @@ for(int i = 0; i < 3; i++) {              // 3 jenis beasiswa
 ```
 **Jawab:** Outer = per jenis, Inner = scan semua data
 
----
 
 ## 7. SYNTAX PENTING
 
@@ -84,18 +82,3 @@ for(int i = 0; i < 3; i++) {              // 3 jenis beasiswa
 | `dataMhs[i][j]` | Akses array 2D |
 
 ---
-
-**nested loop?**
-- Outer loop untuk apa → Inner loop untuk apa → Kasih contoh
-
-**Contoh:**
-> "Fungsi `tampilData()` pakai nested loop. Outer loop buat iterasi tiap mahasiswa, inner loop buat print 5 atribut. Jadi setiap mahasiswa, loop dalam jalan 5 kali untuk print semua kolom."
-
-**kenapa array 2D?**
-> "Karena data terstruktur seperti tabel. Baris = mahasiswa, kolom = atribut. Mudah akses dengan index [i][j]."
-
-**kompleksitas?**
-- `tambahData()`: O(1)
-- `tampilData()`: O(n × 5) = O(n)
-- `cariData()`: O(n × 5) = O(n)
-- `hitungRataIPK()`: O(3 × n) = O(n)
